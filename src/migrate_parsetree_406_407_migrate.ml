@@ -291,6 +291,8 @@ and copy_pattern_desc :
         (copy_loc (fun x  -> x) x0)
   | From.Parsetree.Ppat_exception x0 ->
       To.Parsetree.Ppat_exception (copy_pattern x0)
+  | From.Parsetree.Ppat_effect (x0,x1) ->
+      To.Parsetree.Ppat_effect (copy_pattern x0, copy_pattern x1)
   | From.Parsetree.Ppat_extension x0 ->
       To.Parsetree.Ppat_extension (copy_extension x0)
   | From.Parsetree.Ppat_open (x0,x1) ->
@@ -452,6 +454,9 @@ and copy_structure_item_desc :
   | From.Parsetree.Pstr_exception x0 ->
       To.Parsetree.Pstr_exception
         (copy_extension_constructor x0)
+  | From.Parsetree.Pstr_effect x0 ->
+      To.Parsetree.Pstr_effect
+        (copy_effect_constructor x0)
   | From.Parsetree.Pstr_module x0 ->
       To.Parsetree.Pstr_module
         (copy_module_binding x0)
@@ -770,6 +775,9 @@ and copy_signature_item_desc :
   | From.Parsetree.Psig_exception x0 ->
       To.Parsetree.Psig_exception
         (copy_extension_constructor x0)
+  | From.Parsetree.Psig_effect x0 ->
+      To.Parsetree.Psig_effect
+        (copy_effect_constructor x0)
   | From.Parsetree.Psig_module x0 ->
       To.Parsetree.Psig_module
         (copy_module_declaration x0)
@@ -1097,6 +1105,39 @@ and copy_extension_constructor_kind :
           (copy_option copy_core_type x1))
   | From.Parsetree.Pext_rebind x0 ->
       To.Parsetree.Pext_rebind
+        (copy_loc copy_longident x0)
+
+and copy_effect_constructor :
+  From.Parsetree.effect_constructor ->
+    To.Parsetree.effect_constructor
+  =
+  fun
+    { From.Parsetree.peff_name = peff_name;
+      From.Parsetree.peff_kind = peff_kind;
+      From.Parsetree.peff_loc = peff_loc;
+      From.Parsetree.peff_attributes = peff_attributes }
+     ->
+    {
+      To.Parsetree.peff_name =
+        (copy_loc (fun x  -> x) peff_name);
+      To.Parsetree.peff_kind =
+        (copy_effect_constructor_kind peff_kind);
+      To.Parsetree.peff_loc = (copy_location peff_loc);
+      To.Parsetree.peff_attributes =
+        (copy_attributes peff_attributes)
+    }
+
+and copy_effect_constructor_kind :
+  From.Parsetree.effect_constructor_kind ->
+    To.Parsetree.effect_constructor_kind
+  =
+  function
+  | From.Parsetree.Peff_decl (x0,x1) ->
+      To.Parsetree.Peff_decl
+        ((List.map copy_core_type x0),
+          (copy_core_type x1))
+  | From.Parsetree.Peff_rebind x0 ->
+      To.Parsetree.Peff_rebind
         (copy_loc copy_longident x0)
 
 and copy_type_declaration :
@@ -1464,6 +1505,7 @@ and copy_out_ext_status :
   | From.Outcometree.Oext_first  -> To.Outcometree.Oext_first
   | From.Outcometree.Oext_next  -> To.Outcometree.Oext_next
   | From.Outcometree.Oext_exception  -> To.Outcometree.Oext_exception
+  | From.Outcometree.Oext_effect -> To.Outcometree.Oext_effect
 
 and copy_out_extension_constructor :
   From.Outcometree.out_extension_constructor ->
@@ -1609,7 +1651,7 @@ and copy_out_string :
   From.Outcometree.out_string -> To.Outcometree.out_string =
   function
   | From.Outcometree.Ostr_string -> To.Outcometree.Ostr_string
-  | From.Outcometree.Ostr_bytes -> To.Outcometree.Ostr_bytes 
+  | From.Outcometree.Ostr_bytes -> To.Outcometree.Ostr_bytes
 
 and copy_out_attribute :
   From.Outcometree.out_attribute -> To.Outcometree.out_attribute =
@@ -1660,7 +1702,7 @@ and copy_out_value :
               let (x0,x1) = x  in
               ((copy_out_ident x0),
                 (copy_out_value x1))) x0)
-  | From.Outcometree.Oval_string (x0, x1, x2) -> 
+  | From.Outcometree.Oval_string (x0, x1, x2) ->
       To.Outcometree.Oval_string (x0, x1, copy_out_string x2)
   | From.Outcometree.Oval_stuff x0 -> To.Outcometree.Oval_stuff x0
   | From.Outcometree.Oval_tuple x0 ->

@@ -51,6 +51,7 @@ let copy_mapper = fun
      class_type_declaration;
      class_type_field;
      constructor_declaration;
+     effect_constructor;
      expr;
      extension;
      extension_constructor;
@@ -100,6 +101,7 @@ let copy_mapper = fun
     class_type_declaration = (fun _ x -> copy_class_type_declaration (class_type_declaration mapper (R.copy_class_type_declaration x)));
     class_type_field = (fun _ x -> copy_class_type_field (class_type_field mapper (R.copy_class_type_field x)));
     constructor_declaration = (fun _ x -> copy_constructor_declaration (constructor_declaration mapper (R.copy_constructor_declaration x)));
+    effect_constructor = (fun _ x -> copy_effect_constructor (effect_constructor mapper (R.copy_effect_constructor x)));
     expr = (fun _ x -> copy_expr (expr mapper (R.copy_expr x)));
     extension = (fun _ x -> copy_extension (extension mapper (R.copy_extension x)));
     extension_constructor = (fun _ x -> copy_extension_constructor (extension_constructor mapper (R.copy_extension_constructor x)));

@@ -40,6 +40,8 @@ type missing_feature =
     (** 4.06 -> 4.05: T with type X.t := ... *)
   | Pwith_modsubst_longident
     (** 4.06 -> 4.05: T with module X.Y := ... *)
+  | Palgebraic_effects
+    (** 4.06 -> 4.05: algebraic effects *)
 
 exception Migration_error of missing_feature * Location.t
 
@@ -57,6 +59,7 @@ let missing_feature_description = function
   | Oinherit          -> "inheritance in object type"
   | Pwith_typesubst_longident -> "type substitution inside a submodule"
   | Pwith_modsubst_longident  -> "module substitution inside a submodule"
+  | Palgebraic_effects -> "algebraic effects"
 
 (** [missing_feature_minimal_version x] is the OCaml version where x was
     introduced. *)
@@ -73,6 +76,7 @@ let missing_feature_minimal_version = function
   | Oinherit          -> "OCaml 4.06"
   | Pwith_typesubst_longident -> "OCaml 4.06"
   | Pwith_modsubst_longident  -> "OCaml 4.06"
+  | Palgebraic_effects        -> "OCaml 4.06"
 
 (** Turn a missing feature into a reasonable error message. *)
 let migration_error_message x =

@@ -229,13 +229,13 @@ and copy_pattern :
      ->
     {
       To.Parsetree.ppat_desc =
-        (copy_pattern_desc ppat_desc);
+        (copy_pattern_desc ppat_loc ppat_desc);
       To.Parsetree.ppat_loc = (copy_location ppat_loc);
       To.Parsetree.ppat_attributes =
         (copy_attributes ppat_attributes)
     }
 
-and copy_pattern_desc :
+and copy_pattern_desc loc :
   From.Parsetree.pattern_desc -> To.Parsetree.pattern_desc =
   function
   | From.Parsetree.Ppat_any  -> To.Parsetree.Ppat_any
@@ -291,6 +291,8 @@ and copy_pattern_desc :
         (copy_loc (fun x  -> x) x0)
   | From.Parsetree.Ppat_exception x0 ->
       To.Parsetree.Ppat_exception (copy_pattern x0)
+  | From.Parsetree.Ppat_effect _ ->
+        migration_error loc Def.Palgebraic_effects
   | From.Parsetree.Ppat_extension x0 ->
       To.Parsetree.Ppat_extension (copy_extension x0)
   | From.Parsetree.Ppat_open (x0,x1) ->
@@ -419,11 +421,11 @@ and copy_structure_item :
      ->
     {
       To.Parsetree.pstr_desc =
-        (copy_structure_item_desc pstr_desc);
+        (copy_structure_item_desc pstr_loc pstr_desc);
       To.Parsetree.pstr_loc = (copy_location pstr_loc)
     }
 
-and copy_structure_item_desc :
+and copy_structure_item_desc loc :
   From.Parsetree.structure_item_desc ->
     To.Parsetree.structure_item_desc
   =
@@ -449,6 +451,8 @@ and copy_structure_item_desc :
   | From.Parsetree.Pstr_exception x0 ->
       To.Parsetree.Pstr_exception
         (copy_extension_constructor x0)
+  | From.Parsetree.Pstr_effect _ ->
+      migration_error loc Def.Palgebraic_effects
   | From.Parsetree.Pstr_module x0 ->
       To.Parsetree.Pstr_module
         (copy_module_binding x0)
@@ -747,11 +751,11 @@ and copy_signature_item :
      ->
     {
       To.Parsetree.psig_desc =
-        (copy_signature_item_desc psig_desc);
+        (copy_signature_item_desc psig_loc psig_desc);
       To.Parsetree.psig_loc = (copy_location psig_loc)
     }
 
-and copy_signature_item_desc :
+and copy_signature_item_desc loc :
   From.Parsetree.signature_item_desc ->
     To.Parsetree.signature_item_desc
   =
@@ -769,6 +773,8 @@ and copy_signature_item_desc :
   | From.Parsetree.Psig_exception x0 ->
       To.Parsetree.Psig_exception
         (copy_extension_constructor x0)
+  | From.Parsetree.Psig_effect _ ->
+      migration_error loc Def.Palgebraic_effects
   | From.Parsetree.Psig_module x0 ->
       To.Parsetree.Psig_module
         (copy_module_declaration x0)
@@ -1095,6 +1101,13 @@ and copy_extension_constructor_kind :
   | From.Parsetree.Pext_rebind x0 ->
       To.Parsetree.Pext_rebind
         (copy_loc copy_longident x0)
+
+and copy_effect_constructor :
+    From.Parsetree.effect_constructor ->
+      To.Parsetree.effect_constructor
+    =
+    fun { From.Parsetree.peff_loc = peff_loc; } ->
+        migration_error peff_loc Def.Palgebraic_effects
 
 and copy_type_declaration :
   From.Parsetree.type_declaration -> To.Parsetree.type_declaration =
@@ -1461,6 +1474,7 @@ and copy_out_ext_status :
   | From.Outcometree.Oext_first  -> To.Outcometree.Oext_first
   | From.Outcometree.Oext_next  -> To.Outcometree.Oext_next
   | From.Outcometree.Oext_exception  -> To.Outcometree.Oext_exception
+  | From.Outcometree.Oext_effect  -> migration_error Location.none Def.Palgebraic_effects
 
 and copy_out_extension_constructor :
   From.Outcometree.out_extension_constructor ->
