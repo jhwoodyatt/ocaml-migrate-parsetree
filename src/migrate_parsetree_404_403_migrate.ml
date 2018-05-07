@@ -1184,6 +1184,13 @@ and copy_module_declaration :
         (copy_location pmd_loc)
     }
 
+and copy_effect_constructor :
+    From.Parsetree.effect_constructor ->
+      To.Parsetree.effect_constructor
+    =
+    fun Peff_not_implmented ->
+        migration_error Location.none Def.Palgebraic_effects
+
 and copy_type_extension :
   From.Parsetree.type_extension ->
     To.Parsetree.type_extension

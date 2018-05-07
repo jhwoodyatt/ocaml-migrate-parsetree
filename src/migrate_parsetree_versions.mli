@@ -37,6 +37,7 @@ module type Ast = sig
     type type_declaration
     type type_extension
     type extension_constructor
+    type effect_constructor
   end
   module Outcometree : sig
     type out_value
@@ -79,6 +80,7 @@ type 'a _types = 'a constraint 'a
   type_declaration      : _;
   type_extension        : _;
   extension_constructor : _;
+  effect_constructor    : _;
   out_value             : _;
   out_type              : _;
   out_class_type        : _;
@@ -105,6 +107,7 @@ type 'a get_case = 'x constraint 'a _types = < case : 'x; .. >
 type 'a get_type_declaration = 'x constraint 'a _types = < type_declaration : 'x; .. >
 type 'a get_type_extension = 'x constraint 'a _types = < type_extension : 'x; .. >
 type 'a get_extension_constructor = 'x constraint 'a _types = < extension_constructor : 'x; .. >
+type 'a get_effect_constructor = 'x constraint 'a _types = < effect_constructor : 'x; .. >
 type 'a get_out_value = 'x constraint 'a _types = < out_value : 'x; .. >
 type 'a get_out_type = 'x constraint 'a _types = < out_type : 'x; .. >
 type 'a get_out_class_type = 'x constraint 'a _types = < out_class_type : 'x; .. >
@@ -150,6 +153,7 @@ module type OCaml_version = sig
     type_declaration      : Ast.Parsetree.type_declaration;
     type_extension        : Ast.Parsetree.type_extension;
     extension_constructor : Ast.Parsetree.extension_constructor;
+    effect_constructor    : Ast.Parsetree.effect_constructor;
     out_value             : Ast.Outcometree.out_value;
     out_type              : Ast.Outcometree.out_type;
     out_class_type        : Ast.Outcometree.out_class_type;
@@ -185,6 +189,7 @@ type 'types ocaml_version =
      and type Ast.Parsetree.type_declaration = 'types get_type_declaration
      and type Ast.Parsetree.type_extension = 'types get_type_extension
      and type Ast.Parsetree.extension_constructor = 'types get_extension_constructor
+     and type Ast.Parsetree.effect_constructor = 'types get_effect_constructor
      and type Ast.Outcometree.out_value = 'types get_out_value
      and type Ast.Outcometree.out_type = 'types get_out_type
      and type Ast.Outcometree.out_class_type = 'types get_out_class_type
@@ -246,6 +251,7 @@ type ('from, 'to_) migration_functions = {
   copy_type_declaration: 'from get_type_declaration -> 'to_ get_type_declaration;
   copy_type_extension: 'from get_type_extension -> 'to_ get_type_extension;
   copy_extension_constructor: 'from get_extension_constructor -> 'to_ get_extension_constructor;
+  copy_effect_constructor: 'from get_effect_constructor -> 'to_ get_effect_constructor;
   copy_out_value: 'from get_out_value -> 'to_ get_out_value;
   copy_out_type: 'from get_out_type -> 'to_ get_out_type;
   copy_out_class_type: 'from get_out_class_type -> 'to_ get_out_class_type;
@@ -294,6 +300,7 @@ module Convert (A : OCaml_version) (B : OCaml_version) : sig
   val copy_type_declaration      : A.Ast.Parsetree.type_declaration      -> B.Ast.Parsetree.type_declaration
   val copy_type_extension        : A.Ast.Parsetree.type_extension        -> B.Ast.Parsetree.type_extension
   val copy_extension_constructor : A.Ast.Parsetree.extension_constructor -> B.Ast.Parsetree.extension_constructor
+  val copy_effect_constructor    : A.Ast.Parsetree.effect_constructor    -> B.Ast.Parsetree.effect_constructor
   val copy_out_value             : A.Ast.Outcometree.out_value           -> B.Ast.Outcometree.out_value
   val copy_out_type              : A.Ast.Outcometree.out_type            -> B.Ast.Outcometree.out_type
   val copy_out_class_type        : A.Ast.Outcometree.out_class_type      -> B.Ast.Outcometree.out_class_type

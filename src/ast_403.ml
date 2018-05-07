@@ -527,6 +527,8 @@ module Parsetree = struct
            | C = D
          *)
 
+  and effect_constructor (*IF_CURRENT = Parsetree.extension_constructor_kind *) = Peff_not_implmented
+
   (** {2 Class language} *)
 
   (* Type expressions for the class language *)
@@ -2029,6 +2031,7 @@ module Ast_mapper : sig
     class_type_field: mapper -> class_type_field -> class_type_field;
     constructor_declaration: mapper -> constructor_declaration
                              -> constructor_declaration;
+    effect_constructor: mapper -> effect_constructor -> effect_constructor;
     expr: mapper -> expression -> expression;
     extension: mapper -> extension -> extension;
     extension_constructor: mapper -> extension_constructor
@@ -2110,6 +2113,7 @@ end = struct
     class_type_field: mapper -> class_type_field -> class_type_field;
     constructor_declaration: mapper -> constructor_declaration
                              -> constructor_declaration;
+    effect_constructor: mapper -> effect_constructor -> effect_constructor;
     expr: mapper -> expression -> expression;
     extension: mapper -> extension -> extension;
     extension_constructor: mapper -> extension_constructor
@@ -2575,6 +2579,7 @@ end = struct
       typ = T.map;
       type_extension = T.map_type_extension;
       extension_constructor = T.map_extension_constructor;
+      effect_constructor = (fun this c -> c);
       value_description =
         (fun this {pval_name; pval_type; pval_prim; pval_loc;
                    pval_attributes} ->
@@ -2868,6 +2873,7 @@ let shallow_identity =
     typ                     = id;
     type_extension          = id;
     extension_constructor   = id;
+    effect_constructor      = id;
     value_description       = id;
     pat                     = id;
     expr                    = id;
@@ -2916,6 +2922,7 @@ let failing_mapper =
     typ                     = fail;
     type_extension          = fail;
     extension_constructor   = fail;
+    effect_constructor      = fail;
     value_description       = fail;
     pat                     = fail;
     expr                    = fail;

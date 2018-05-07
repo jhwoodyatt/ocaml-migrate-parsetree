@@ -14,8 +14,12 @@
 (*                                                                        *)
 (**************************************************************************)
 
+module Def = Migrate_parsetree_def
 module From = Ast_405
 module To = Ast_406
+
+let migration_error location feature =
+  raise (Def.Migration_error (feature, location))
 
 let rec copy_expression :
   From.Parsetree.expression -> To.Parsetree.expression =
@@ -1084,6 +1088,13 @@ and copy_extension_constructor_kind :
   | From.Parsetree.Pext_rebind x0 ->
       To.Parsetree.Pext_rebind
         (copy_loc copy_longident x0)
+
+and copy_effect_constructor :
+    From.Parsetree.effect_constructor ->
+      To.Parsetree.effect_constructor
+    =
+    fun Peff_not_implmented ->
+        migration_error Location.none Def.Palgebraic_effects
 
 and copy_type_declaration :
   From.Parsetree.type_declaration -> To.Parsetree.type_declaration =
